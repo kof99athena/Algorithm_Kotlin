@@ -1,52 +1,49 @@
-import java.sql.Array
 import java.util.LinkedList
 import java.util.Queue
-import kotlin.math.max
-
 
 fun main() {
-    val (N, M) = readln().split(" ").map { it.toInt() }
-    val inputArray = Array(N) { readln().split(" ").map { it.toInt() }.toIntArray() }
-    val visited = kotlin.Array(N) { BooleanArray(M) }
+    val (n, m) = readln().split(" ").map { it.toInt() }
+    val picture = Array(n) { readln().split(" ").map { it.toInt() }.toIntArray() }
+    val visited = Array(n) { IntArray(m) }
+
+    //(상, 하, 좌, 우)
+    val dx = intArrayOf(0, 0, +1, -1)
+    val dy = intArrayOf(+1, -1, 0, 0)
 
     var count = 0
-    var max = 0
-    val dy = arrayOf(0, 1, 0, -1)
-    val dx = arrayOf(1, 0, -1, 0)
+    var maxArea = 0
 
-    fun bfs(y: Int, x: Int): Int {
-        var size = 1
-        val queue: Queue<Pair<Int, Int>> = LinkedList()
-        queue.add(Pair(y, x))
+    val queue: Queue<Pair<Int, Int>> = LinkedList()
 
-        while (queue.isNotEmpty()) {
-            val (j, i) = queue.poll()
-            for (k in 0 until 4) {
-                val ny = j + dy[k]
-                val nx = i + dx[k]
+    for (i in 0..<n) {
+        for (j in 0..<m) {
+            if (picture[i][j] == 1 && visited[i][j] == 0) {
+                count++
+                var area = 0
+                queue.clear()
+                queue.add(i to j)
+                visited[i][j] = 1
 
-                if (ny in 0 until N && nx in 0 until M && inputArray[ny][nx] == 1 && !visited[ny][nx]) {
-                    visited[ny][nx] = true
-                    size++
-                    queue.add(Pair(ny, nx))
+                while (queue.isNotEmpty()) {
+                    val (x, y) = queue.poll()
+                    area++
+
+                    for (k in 0..<4) {
+                        val nx = x + dx[k]
+                        val ny = y + dy[k]
+
+                        if (nx !in 0 until n || ny !in 0 until m) continue
+
+                        if (picture[nx][ny] == 1 && visited[nx][ny] == 0) {
+                            visited[nx][ny] = 1
+                            queue.add(nx to ny)
+                        }
+                    }
                 }
-            }
-        }
-        return size
-    } // bfs
-
-    for (j in inputArray.indices) {
-        for (i in inputArray[j].indices) {
-            if (inputArray[j][i] == 1 && visited[j][i] == false) {
-                //전체 그림 개수 +1
-                visited[j][i] = true
-                count += 1
-                //BFS를 통해서 그림의 크기르 구한다.
-                max = max(max, bfs(j, i))
-                //최대값 갱신
+                if (area > maxArea) maxArea = area
             }
         }
     }
     println(count)
-    println(max)
+    println(maxArea)
 }
