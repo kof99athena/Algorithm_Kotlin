@@ -1,8 +1,3 @@
-fun main() {
-    val solution = Solution()
-    println(solution.solution(intArrayOf(1, 3, 2, 4, 2)).joinToString(" "))
-}
-
 class Solution {
     fun solution(answers: IntArray): IntArray {
         var answer = intArrayOf(0, 0, 0)
